@@ -3,7 +3,8 @@ import random
 import requests
 from discord.ext import commands
 
-# "this is a stupid message to keep this thing going"
+# This is just the Original Code
+
 intents = discord.Intents.default()
 intents.message_content = True
 
