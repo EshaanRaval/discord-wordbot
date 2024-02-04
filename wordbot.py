@@ -1,8 +1,9 @@
 import discord
 import random
 import requests
+import json
 from discord.ext import commands
-
+from discord import Interaction
 ## Day 1 Edit: 
 ## Imma go sleep now (I started at 8 and now it's 11 and i have math 138 (physics) quiz tomorrow so yeah!)
 ## Look at the code i wrote so far (i made a lot of progress)
@@ -27,6 +28,8 @@ prohibited_words= ['anal', 'anus', 'arse','ass','ballsack','balls','bastard','bi
 
 @bot.event
 async def on_ready():
+    await bot.change_presence(activity = discord.activity.CustomActivity(name = "Contemplating the meaning of life, the universe, and whether a synonym for 'serendipity' is just 'happenstancy.'"), status = discord.Status.idle)
+    await bot.tree.sync(guild = discord.Object(id = 556414711160242186))
     print(f'Logged in as {bot.user.name}')
 
 
@@ -126,7 +129,7 @@ async def definewsyns(message):
     if response.status_code == 200:
         data = json.response()
         if data:
-            meanings = data().get("meanings",[])
+            meanings = data[0].get("meanings",[])
             if meanings:
                 response_text = f"Definitions for {word}:\n\n"
                 for meaning in meanings:
@@ -148,17 +151,27 @@ async def definewsyns(message):
         await message.send(f"Failed to fetch data. Status code: {response.status_code}")
 
 
+
+
+
 @bot.command()
 async def origin(message):
     word = message.message.content.split()[1]
     api_url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
     response = requests.get(api_url)
+    
     if response.status_code == 200:
-        data = json.response()
+        data = response.json()
+        
         if data:
-            meanings = data().get("meanings",[])
+            info = data[0].get("origin", [])
+            response_text = f"Origin of {word}:\n\n{info}"
+            await message.send(response_text)
+        else:
+            await message.send(f"No data found for {word}.")
+    else:
+        await message.send(f"Failed to fetch data. Status code: {response.status_code}")
 
-                    
 
 
 # Command to play the game
@@ -209,8 +222,9 @@ async def on_message(message):
                 await message.channel.send("Sorry, that word is not in the dictionary. Try another word.")
 
 
-
-
+@bot.tree.command(name = 'hello', description = 'respond with a "sophisticated" greeting', guild = discord.Object(id= 556414711160242186))
+async def hello(interaction: Interaction):
+    await interaction.response.send_message('Hello there!')
 
 
 bot.run('OTMzMjU1ODIwMjQ0ODM2NDAy.GGmAQX.HfdYfyveybqJoctvp4Dm9cCnxMD0aBlFQeyBpU')
