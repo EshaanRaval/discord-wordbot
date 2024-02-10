@@ -4,9 +4,18 @@ import requests
 import json
 from discord.ext import commands
 from discord import Interaction
+from bs4 import BeautifulSoup
 ## Day 1 Edit: 
 ## Imma go sleep now (I started at 8 and now it's 11 and i have math 138 (physics) quiz tomorrow so yeah!)
 ## Look at the code i wrote so far (i made a lot of progress)
+
+
+## Day 2 Edit:
+## **Tried** learning slash commands and fixing the define categories of commands (still doesn't work)
+## Did not make considerable amount of progress but i think i understand how to work with slash commands now 
+
+### Day 3:
+
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -33,9 +42,6 @@ async def on_ready():
     print(f'Logged in as {bot.user.name}')
 
 
-@bot.command()
-async def info(message):  
-    await message.send("I am WordBot, a bot that allows Discord members to play a chat-based word game! Type `w.start` to begin the game.")
 
 @bot.command()
 async def start(message):
@@ -127,7 +133,7 @@ async def definewsyns(message):
     api_url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
     response = requests.get(api_url)
     if response.status_code == 200:
-        data = json.response()
+        data = response.json()
         if data:
             meanings = data[0].get("meanings",[])
             if meanings:
@@ -154,27 +160,155 @@ async def definewsyns(message):
 
 
 
+# @bot.command()
+# async def origin(message):
+#     word = message.message.content.split()[1]
+#     api_url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
+#     response = requests.get(api_url)
+    
+#     if response.status_code == 200:
+#         data = response.json()
+        
+#         if data:
+#             info = data[0]["origin"]
+#             response_text = f"Origin of {word}:\n\n{info}"
+#             await message.send(response_text)
+#         else:
+#             await message.send(f"No data found for {word}.")
+#     else:
+#         await message.send(f"Failed to fetch data. Status code: {response.status_code}")
+
+
+
+
+
+###### BOT COMMANDS ############
+### info
+## Command
+@bot.command()
+async def info(message):  
+    await message.send("I am WordBot, a bot that allows Discord members to play a chat-based word game! Type `w.start` to begin the game.")
+
+
+## Slash
+
+@bot.tree.command(name = 'info', description = 'gives a generic information about the bot', guild = discord.Object(id= 556414711160242186))
+async def sinfo(interaction: Interaction):
+    await interaction.response.send_message('I am WordBot, a bot that allows Discord members to play a chat-based word game! Type `w.start` to begin the game.')
+
+### help 
+# @bot.command()
+# async def help(message):
+#     response = "This is a help function (which is appparently still a WIP)"
+#     await message.send(response)
+
+@bot.tree.command(name= 'help', description = "lists out all of the commands and what they do (still a WIP)", guild = discord.Object(id= 556414711160242186))
+async def shelp(interaction: Interaction):
+    await interaction.response.send_message("This is a help function (which is appparently still a WIP)")
+
+### thanks
+msg_thanks = "Thanks to..... :"
+@bot.command()
+async def thanks(message):
+    await message.send(msg_thanks)
+
+@bot.tree.command(name = 'thanks', description = "Displays a Thank you message", guild = discord.Object(id= 556414711160242186))
+async def sthanks(interaction: Interaction):
+    await interaction.response.send_message(msg_thanks)
+
+### fun fact
+fun_fact = {1: "", 2: "", 3: "", 4: "", 5: "",6: "", 7: "", 8: "", 9: "", 10: ""}
+@bot.command()
+async def funfact(message):
+    index = random.choice(range(len(fun_fact)))
+    await message.send(fun_fact[index])
+
+@bot.tree.command(name: "funfact", description = "Responds with a fun fact", )
+
+############ story #################################
+
+Story = ""
+@bot.command()
+async def lore(message):
+    await message.send(story)
+
+@bot.tree.command(name: "Story", description = "Want to know the story behind making of this bot?", guild = discord.Object(id = 556414711160232186))
+async def sstory(interaction: Interaction):
+    await interaction.response.send_message(Story)
+
+                
+############ BOT FUNCTIONALITY ###########
+
+### Define
+define = bot.group("define", "Definition")
+
+## Command
+## Slash                
+## #Define with examples
+## Command
+## Slash
+### Origin/Epytomology
+## Command
 @bot.command()
 async def origin(message):
+    """get_etymology"""
     word = message.message.content.split()[1]
+    url = f"https://www.etymonline.com/word/{word}"
     api_url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
-    response = requests.get(api_url)
-    
+    response2 = requests.get(api_url)
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, "html.parser")
+        reply = soup.find("section", class_="word__defination--2q7ZH").get_text()
+        # print("This is the printed ans"+ans)
+        
+    elif response2.status.code != 200:
+        reply = "Sorry, we couldn't find that word"
+    else: 
+        reply = "Sorry, We Couldn't find the origin of this word"
+    await message.send(reply)
+## Slash
+@bot.tree.command(name = 'origin', description = "Find out about the origin of thw word of your choice")
+async def sorigin(interaction: Interaction):
+    word = interaction.message.content.split()[1]
+    url = f"https://www.etymonline.com/word/{word}"
+    api_url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
+    response2 = requests.get(api_url)
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        reply = soup.find("section", class_="word__defination--2q7ZH").get_text()
+        # print("This is the printed ans"+ans)
+        
+    elif response2.status.code != 200:
+        reply = "Sorry, we couldn't find that word"
+    else: 
+        reply = "Sorry, We Couldn't find the origin of this word"
+    await interaction.response.send_message(reply)    
+### Quote --> https://api.quotable.io/
+# Genre Based:
+# random:
+@bot.command()
+async def quote(message):
+
+    url = "https://api.quotable.io/quotes/random"
+    response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
-        
-        if data:
-            info = data[0].get("origin", [])
-            response_text = f"Origin of {word}:\n\n{info}"
-            await message.send(response_text)
-        else:
-            await message.send(f"No data found for {word}.")
+        # print(data[0])
+        # print(data[0]['content'])
+        reply = f" \"{data[0]['content']}\" - {data[0]['author']}"
     else:
-        await message.send(f"Failed to fetch data. Status code: {response.status_code}")
-
-
+        reply = f"Sorry something went wrong: [Error: {response.status.code}]"
+    await message.send(reply)
+      
+                
+### Word Games --> https://dictionaryapi.dev
+# Word Chain
 
 # Command to play the game
+        
 @bot.event
 async def on_message(message):
     global last_letter, game_on, desired_channel, previous_word, respondent_id
@@ -222,7 +356,18 @@ async def on_message(message):
                 await message.channel.send("Sorry, that word is not in the dictionary. Try another word.")
 
 
-@bot.tree.command(name = 'hello', description = 'respond with a "sophisticated" greeting', guild = discord.Object(id= 556414711160242186))
+# One Word Story
+
+
+# Hangman (possible?)
+
+
+
+######
+
+
+
+@bot.tree.command(name = 'hello', description = 'respond )with a "sophisticated" greeting', guild = discord.Object(id= 556414711160242186))
 async def hello(interaction: Interaction):
     await interaction.response.send_message('Hello there!')
 
