@@ -41,15 +41,37 @@ count_on = False
 count_channel = None
 count_number = 0
 count_respondent_id = ""
+
+### Boom Game Variables
+global boom_on, boom_number, boom_multiple, boom_channel, boom_respondent_id, dead_agents
+boom_on = False
+boom_channel = None
+boom_number = 0
+boom_multiple = 7
+boom_respondent_id = ""
+dead_agents = []
+
 ### One Word Story Variables
+global story_on, story_channel, one_story, story_respondent_id
+
 story_on = False
 story_channel = None
 one_story = []
 story_respondent_id = ""
-### 
+
+###  Hangman Story Variables:
+global hang_word, hang_stage, hang_difficulty, hang_guessed_letters, hang_on, hang_convict
+hang_on = False
+hang_stage = None
+hang_word = None
+hang_convict = None
+hang_guessed_letters = []
+hang_difficulty = {"easy": 16, "standard": 7, "hardcore": 1}
+
+
 
 allowed_user = [556413007823896587, 687687366500286649, 1164014463511433316]
-prohibited_words= ['anal', 'anus', 'arse','ass','ballsack','balls','bastard','bitch','biatch','bloody','blowjob','blow job','bollock','bollok','boner','boob','bugger','bum','butt','buttplug','clitoris','cock','coon','crap','cunt','damn','dick','dildo','dyke','fag','feck','fellate','fellatio','felching','fuck','fudgepacker','flange','hell','homo','jerk','jizz','knobend','labia','lmao','lmfao','muff','nigger','nigga','omg','penis','piss','poop''prick', 'pube''pussy','queer','scrotum','sex','shit','s hit','sh1t','slut','smegma','spunk', 'tit','tosser','turd', 'twat', 'vagina','wank', 'whore', 'wtf']
+prohibited_words= ['anal', 'anus', 'arse','ass','ballsack','balls','bastard','bitch','biatch','bloody','blowjob','blow job','bollock','bollok','boner','boob','bugger','bum','butt','buttplug','clitoris','cock','coon','crap','cunt','damn','dick','dildo','dyke','fag','feck','fellate','fellatio','felching','fuck','fudgepacker','flange','hell','homo','jerk','jizz','knobend','labia','muff','nigger','nigga','omg','penis','piss','poop''prick', 'pube''pussy','queer','scrotum','sex','shit','s hit','sh1t','slut','smegma','spunk', 'tit','tosser','turd', 'twat', 'vagina','wank', 'whore']
 
 
 @bot.event
@@ -67,7 +89,7 @@ async def on_ready():
 #    /------------------------------------------- B A S I C  | C O M M A N D S ------------------------------------------------------\
 
 ##  ------------------------------------------------------ I N F O  ---------------------------------------------------------------------- ##
-@bot.hybrid_command(with_app_command= True, aliases = ["test"])
+@bot.hybrid_command(with_app_command= True, aliases = ["Info"])
 @app_commands.guilds(discord.Object(id = 773492566208675851))
 async def info(message):  
     """Learn Basic Information about the Wordbot to get things rollings"""
@@ -100,11 +122,12 @@ async def thanks(message):
 
 ##  ------------------------------------------------------ F U N | F A C T  ------------------------------------------------------------------- ##
     
-fun_fact = {1: "", 2: "", 3: "", 4: "", 5: "",6: "", 7: "", 8: "", 9: "", 10: ""}
+fun_fact = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5",6: "6", 7: "7", 8: "8", 9: "9", 10: "10"}
+
 @bot.hybrid_command(with_app_command=True, aliases = ["ffs", "fact", "fun"])
 @app_commands.guilds(discord.Object(id = 773492566208675851))
 async def funfact(message):
-    index = random.choice(range(len(fun_fact)))
+    index = chaos.choice(range(len(fun_fact)))
     await message.send(fun_fact[index])
 
 
@@ -112,8 +135,8 @@ async def funfact(message):
 ##  ------------------------------------------------------- S T O R Y ------------------------------------------------------------------- ##
 
 Story = ""
-@bot.hybrid_command(with_app_command=True, aliases = ["Lore","story", "Story"])
-@app_commands.guilds(discord.Object(id = 773492566208675851))
+@bot.hybrid_command(with_app_command=True, aliases=["Lore", "history", "background"])
+@app_commands.guilds(discord.Object(id=773492566208675851))
 async def lore(message):
     await message.send(Story)
 
@@ -537,13 +560,12 @@ async def end(message):
 
 
 # Count -> math module (lmao just kiddin)
-
 @bot.hybrid_group(name = "count", with_app_command=True, aliases = ["Count", "Numbers", "mafs", "ct"])
 @app_commands.guilds(discord.Object(id = 773492566208675851))
 async def count(message):
     """ Mafs or something i dunno """
     response_text = "The mathematics isn't adding up, my friend."
-    message.send(response_text)
+    await message.send(response_text)
 
 
 @count.command(name = "info", aliases = ["help", "Help", "Info"])
@@ -609,16 +631,294 @@ async def end(message):
 
 # Boom -> copy past count but more boring
 
+@bot.hybrid_group(name = "boom", with_app_command=True, aliases = ["Explosion", "bomb", "defuse", "bm"])
+@app_commands.guilds(discord.Object(id = 773492566208675851))
+async def boom(message):
+    """ SnD... but with mafs ig """
+    response_text = "You're the only one left, Remember your training, Ghost!"
+    await message.send(response_text)
+
+@boom.command(name="info", aliases=["help", "Help", "Info"])
+@app_commands.guilds(discord.Object(id=773492566208675851))
+@commands.cooldown(1, 300, commands.BucketType.user)
+async def info(message):
+    embed = discord.Embed(
+        title="🧨 Welcome to the Explosive Countdown! 💣",
+        description="Prepare yourselves, elite bomb squad members! The ultimate challenge of wits and reflexes is about to begin.\n\n"
+                    "🔹 **To Initiate the Countdown:** Use the command `!start` within our designated channel.\n"
+                    "🔹 **Counting Protocol:** Count sequentially, but every time you reach a multiple of 7, shout **BOOM!** instead of the number.\n"
+                    "🔹 **Rules of Engagement:** Ensure accuracy and keep the sequence going. Miscounts will be swiftly corrected.\n"
+                    "🔹 **Victory Condition:** The game continues until a mistake is made or a player hesitates.\n\n"
+                    "Stay sharp and let the explosive fun commence!",
+        colour=discord.Colour.red()
+    )
+    
+    embed.set_footer(
+        icon_url="https://cdn.discordapp.com/emojis/844143267305226291.gif?size=80&quality=lossless",
+        text="In the spirit of the countdown, defuse with precision! (<3)"
+    )
+    
+    embed.set_author(
+        name=f"Greetings, {message.author}",
+        url="https://discord.com/channels/773492566208675851/773503731177750548/1238976852501201038",
+        icon_url="https://cdn.discordapp.com/attachments/865310876319612935/1239006563784458322/WordBot1.png?ex=66415a48&is=664008c8&hm=47cd1a96df9ac9935900e51c2e592ca7b7877e81eec5d975bae961eb9ec8367f&"
+    )
+    
+    embed.timestamp = datetime.datetime.now()  # Sets the current time as the timestamp
+    
+    # Add formatted field
+    embed.add_field(name="Field Title", value="*Italic text* **Bold text** __Underlined text__", inline=False)
+    
+    # Mentioning user
+    embed.add_field(name="Field Title", value=f"Mentioning user: {message.author.mention}", inline=False)
+    
+    # Custom emoji
+    embed.add_field(name="Field Title", value="<:emoji_name:emoji_id> This is a custom emoji", inline=False)
+
+    await message.send(embed=embed)
+
+
+
+@boom.command(name="start", aliases=["st", "Start", "Begin", "begin", "Commence", "commence", "Initiate", "initiate", "Embark", "embark"])
+@app_commands.guilds(discord.Object(id=773492566208675851))
+async def start(message, channel: discord.TextChannel = None, multiple: int = 7):
+    global boom_on, boom_channel, boom_number, boom_multiple, boom_respondent_id
+    if channel is None:
+        channel = message.channel
+    if message.author.guild_permissions.manage_messages and not boom_on:
+        boom_on = True
+        boom_channel = channel
+        boom_number = 0
+        boom_multiple = multiple
+        boom_respondent_id = None
+        dead_agents = []
+        await message.send(f"Alright, team! The explosive counting showdown starts now in {boom_channel.mention}. Let's roll! The initial number is ||1||. Remember, every multiple of {boom_multiple} is a 'BOOM!'")
+    elif boom_on:
+        await message.send("The game is already in progress, soldier!")
+        await asyncio.sleep(5)
+        await message.channel.purge(limit=1)
+    else:
+        await message.send("Only officers with the right clearance can start the game!")
+        await asyncio.sleep(5)
+        await message.channel.purge(limit=1)
+
+
+@boom.command(name="end", aliases=['ed', "End", 'stop', "Stop"])
+@app_commands.guilds(discord.Object(id=773492566208675851))
+async def end(message):
+    global boom_on, boom_channel, boom_number, boom_respondent_id
+
+    if message.author.guild_permissions.manage_messages:
+        if boom_on:
+            boom_channel = None
+            boom_on = False
+            boom_number = 0
+            boom_respondent_id = None
+            dead_agents = []
+            await message.send("Good game, everyone! The explosive showdown has concluded. Rest up and get ready for the next one!")
+        else:
+            await message.send("Are you out of your mind? The game hasn't started!")
+    else:
+        await message.send("You don't have the clearance to end the game!")
+
 
 # One Word Story -> wordhippo
+@bot.hybrid_group(name = "story", with_app_command=True, aliases = ["oneword", "Story", "caveman", "st"])
+@app_commands.guilds(discord.Object(id = 773492566208675851))
+async def story(message):
+    """ Caveman together strong!! """
+    response_text = "Oogaa Bugga, my friend. mE cOde, CoDe nO wOrK, me wanna commit nOt LiVe"
+    await message.send(response_text)
+
+@story.command(name="info", aliases=["help", "Help", "Info"])
+@app_commands.guilds(discord.Object(id=773492566208675851))
+@commands.cooldown(1, 300, commands.BucketType.user)
+async def info(message):
+    embed = discord.Embed(
+        title="Welcome to the Caveman Story Circle!",
+        description="In this prehistoric game, each player adds one word to create a collaborative story. Embrace your inner caveman and help us weave an epic tale, one grunt at a time.\n\n"
+                    "🔹 **To Start the Story:** Use `w.story start` in the designated channel.\n"
+                    "🔹 **Contributing to the Story:** Take turns adding one word to continue the story.\n"
+                    "🔹 **Caveman Theme:** Keep words simple and fitting the caveman setting.\n"
+                    "🔹 **Story Flow:** Ensure the story makes sense as it progresses.\n\n"
+                    "May your words be simple and your imagination wild as we weave our caveman adventure!",
+        color=discord.Color.dark_gold()
+    )
+    embed.set_footer(icon_url="https://cdn.discordapp.com/emojis/123456789012345678.gif?size=80&quality=lossless", text="Happy Grunting!")
+    embed.set_author(name=f"Hey, {message.author}", icon_url="https://cdn.discordapp.com/attachments/123456789012345678/123456789012345678/CavemanIcon.png")
+    embed.timestamp = datetime.datetime.utcnow()
+
+    await message.send(embed=embed)
+
+@story.command(name = "start", aliases = ["st", "Start", "Begin", "begin"])
+@app_commands.guilds(discord.Object(id=773492566208675851))
+async def start(message, channel: discord.TextChannel = None, s_word: str = "Ugh!"):
+    global story_channel, story_on, story_respondent_id, one_story
+    if channel is None:
+        channel = message.channel
+    if message.author.guild_permissions.manage_messages and not story_on:
+        story_on = True
+        story_channel = channel
+        one_story = []
+        story_respondent_id = ""
+        await message.send(f"🔥 **Gather 'round, fellow Bortha(s)!** 🪨\nThe epic caveman tale begins in {story_channel.mention}. Our first word is: ||{s_word}||.")
+    elif story_on:
+        await message.send("Ugh! Close Monke Bortha, story start already.")
+        await asyncio.sleep(5)
+        await message.channel.purge(limit=1)
+    else:
+        await message.send("Ugh! Only the wise Monke(s) (staff) can story start.")
+        await asyncio.sleep(5)
+        await message.channel.purge(limit=1)
+
+#slicer function for the story copy pastin (why is my brain become monke?)
+def split_story(words, max_length=2000):
+    # Create an empty list to store the chunks of the story
+    chunks = []
+    current_chunk = []
+
+    # Keep track of the current length of the chunk being built
+    current_length = 0
+
+    # Loop through each word in the list
+    for word in words:
+        # Calculate the length of the word plus a space
+        word_length = len(word) + 1  # Add 1 for the space
+
+        # If adding this word would exceed the max_length
+        if current_length + word_length > max_length:
+            # Join the current chunk into a string and add it to chunks
+            chunks.append(" ".join(current_chunk))
+            # Start a new chunk with the current word
+            current_chunk = [word]
+            # Reset current_length to the length of the current word plus a space
+            current_length = word_length
+        else:
+            # Add the word to the current chunk
+            current_chunk.append(word)
+            # Update the current length
+            current_length += word_length
+
+    # Add the last chunk if it exists
+    if current_chunk:
+        chunks.append(" ".join(current_chunk))
+
+    return chunks
+
+@story.command(name = "tell", aliases = ["tale", "Tale", "Lore", "lore", "legend", "Legend", "narrative", "Narrative", "myth", "Myth", "history", "History"])
+@app_commands.guilds(discord.Object(id=773492566208675851))
+@commands.cooldown(1, 3000, commands.BucketType.user)
+async def end(message):
+    story_chunks = split_story(one_story)
+    for i, chunk in enumerate(story_chunks):
+        embed = discord.Embed(title="Caveman Story Time", description=chunk, color=discord.Color.dark_gold())
+        if i == len(story_chunks) - 1:
+            embed.set_footer(text="Grug and friends say: Ugh! End of story time.")
+        else:
+            embed.set_footer(text="But the story continues...")
+            await message.channel.send(embed=embed)
+
+@story.command(name="end", aliases=["ed", "End", "stop", "night", "monketired"])
+@app_commands.guilds(discord.Object(id=773492566208675851))
+async def end(message):
+    global story_on, story_channel, one_story, story_respondent_id
+
+    if message.author.guild_permissions.manage_messages:
+        if story_on:
+            story_on = False
+            story_channel = None
+
+            # Split the story into chunks
+            story_chunks = split_story(one_story)
+
+            # Create and send the embeds for each chunk
+            for i, chunk in enumerate(story_chunks):
+                embed = discord.Embed(title="Caveman Story Time", description=chunk, color=discord.Color.dark_gold())
+                if i == len(story_chunks) - 1:
+                    embed.set_footer(text="Grug and friends say: Ugh! End of story time.")
+                else:
+                    embed.set_footer(text="But the story continues...")
+                await message.channel.send(embed=embed)
+
+            # Clear the story and reset variables
+            one_story = []
+            story_respondent_id = None
+        else:
+            await message.channel.send("Grug confused. Story already end.")
+    else:
+        await message.channel.send("Ugh! Only the wise Monke(s) (staff) can story end.")
+
+# Hangman (possible?) - yes - https://youtu.be/0G3gD4KJ59U (TurkeyDev) <- Can't use that
 
 
-# Hangman (possible?) - yes - https://youtu.be/0G3gD4KJ59U (TurkeyDev)
+# @bot.hybrid_group(name = "guess", with_app_command= True, aliases =["hm", "fr", "frr", "word_guess", "Guess","word"])
+# @app_commands.guilds(discord.Object(id =773492566208675851))
+# async def guess(message):
+#     """Guess the Word but the stakes are high"""
+#     response_text = "-.. .- .. / --. --- -....- -- .- -.- ..- ---... / `... .... ..`"
+#     await message.send(response_text)
 
+# guess.command(name = "info", aliases = ["Info", "help", "Help"])
+# @app_commands.guilds(discord.Object(id=773492566208675851))
+# @commands.cooldown(1, 300, commands.BucketType.user)
+# async def info(message):
+#     embed = discord.Embed(
+#         title=":flag_fr:⚔️ Welcome to French Roulette! ⚔️:flag_fr:",
+#         description=(
+#             "Greetings, brave soul! In this treacherous game of wit and chance, you find yourself in the grim setting of a medieval dungeon. The executioner's noose looms near, and your fate hinges upon your ability to guess the hidden word. Dare you test your luck and cunning to escape the gallows?\n\n"
+#             "**Settings and Atmosphere:**\n"
+#             "🔸 **Single-Player (1p):** Stand alone in the dim light of the dungeon, with only your wits to save you.\n"
+#             "🔸 **Multiplayer (mp):** Unite with fellow captives to save your comrade from the hangman's rope.\n\n"
+#         ),
+#         color=discord.Color.dark_red()
+#     )
+#     embed.set_footer(text="May the odds be ever in your favor, lest you become the jester's next joke!")
+#     embed.add_field(name = "**Difficulties:**\n", value = "1. **Easy:** You have 16 chances to guess the word correctly.\n2. **Standard:** You have 7 chances to save yourself.\n 3. **Hardcore:** A single chance stands between you and the gallows.\n\n", inline= False)
+#     embed.add_field(name = "**Game Modes:**\n", value = "🔹 **1p (Single-Player):** Brave the ordeal alone, facing the executioner's wrath.\n🔹 **mp (Multiplayer):** Combine your efforts with other prisoners to thwart the hangman.\n\n", inline= False)
+        
+#             # ""
+#             # "
+#             # "**How to Play:**\n"
+#             # "1. **Start a Game:** Invoke the command `!hangman start <mode> <difficulty>` to begin your trial. In multiplayer mode, use `!hangman wfriends` and have the judge set the word with `!hangman addword <word>`.\n"
+#             # "2. **Guessing:** Take turns guessing letters by typing them in the game channel. Each correct guess reveals parts of the hidden word.\n"
+#             # "3. **Hidden Word:** The word begins as a series of underscores. Correct guesses uncover the letters.\n"
+#             # "4. **Incorrect Guesses:** Each wrong guess tightens the noose. The number of allowed incorrect guesses depends on the chosen difficulty.\n"
+#             # "5. **Win or Lose:** Reveal the entire word before running out of guesses to escape the hangman’s noose. Fail, and face the grim fate.\n\n"
+#             # "**Example Commands:**\n"
+#             # "🔹 Start a game: `!hangman start 1p easy`\n"
+#             # "🔹 Start a multiplayer game: `!hangman wfriends`\n"
+#             # "🔹 Judge sets the word: `!hangman addword example`\n"
+#             # "🔹 Make a guess: Simply type a letter in the game channel.\n\n"
+#             # "**Rules Overview:**\n"
+#             # "🔸 **Single-Player:** Test your individual resolve and knowledge.\n"
+#             # "🔸 **Multiplayer:** Work in unison with your fellow prisoners to outsmart the hangman.\n"
+#             # "🔸 **Guessing:** Only single letter guesses are accepted per turn.\n"
+#             # "🔸 **Revealing:** Correct guesses uncover segments of the word.\n"
+#             # "🔸 **Ending:** The game concludes when the word is completely guessed or the guesses run out.\n\n"
+#             # "**Good luck, noble prisoners! May you outwit the executioner and reclaim your freedom.**"
+#     await message.send(embed=embed)
+
+# hangman.command(name = "start", aliases = ["Start"])
+# @app_commands.describe(difficulty = "Choose a difficulty to play on")
+# @app_commands.choices(difficulty = [
+#     discord.app_commands.Choice(name = "Easy", value = "ez"),
+#     discord.app_commands.Choice(name = "Standard", value = "standie"),
+#     discord.app_commands.Choice(name = "Hardcore", value = "hedcore")
+# ])
+# @app_commands.guilds(discord.Object(id=773492566208675851))
+# async def start(message, difficulty: discord.app_commands.Choice[str]):
+#     await message.send(f"Recieved the following message = {message}, mode = None, difficulty = {difficulty.name}")
+
+# @app_commands.describe(mode = "Choose a Mode to Play")
+# @app_commands.choices(mode = [
+#     discord.app_commands.Choice(name = "1p ", value = 1),
+#     discord.app_commands.Choice(name = "mp", value = 2),
+# ])
 
 
 ######
-@bot.hybrid_command
+@bot.hybrid_command(with_app_command=True)
+@app_commands.guilds(discord.Object(id =773492566208675851))
 async def test(message, member: discord.Member = None):
     if member is None:
         member = message.guild.get_member(bot.user.id)  # Get the bot member object
@@ -633,9 +933,10 @@ async def test(message, member: discord.Member = None):
     embed.set_thumbnail(url = f"{pfp}")
     embed.add_field(name= "Field 1", value = "Value of the Field")
     embed.add_field(name= "Field 2", value = "Value of the Field with inline true", inline=True)
-    embed.add_field(name= "Field 3", value = "Value of the Field with inline fale", inline = False)
+    embed.add_field(name= "Field 3", value = "Value of the Field with inline false", inline = False)
+    embed.add_field(name = "Test for Channels, Emoji and Mentions", value = f"<a:CU_Explosion:1255844777388146720> <:flag_fr:>, {message.author.mention}, {message.channel.mention}")
     embed.set_footer(text="**This is the footer**", icon_url= "https://en.wikipedia.org/wiki/History_of_calendars")
-    embed.timestamp
+    embed.timestamp = datetime.datetime.now()
     await message.send(embed = embed)
 
 # Command to play the game
@@ -644,6 +945,8 @@ async def test(message, member: discord.Member = None):
 async def on_message(message):
     global last_letter, word_game_on, desired_channel, previous_word, word_respondent_id
     global count_channel, count_on, count_respondent_id, count_number
+    global boom_on, boom_channel, boom_respondent_id, boom_number, boom_multiple, dead_agents
+    global story_on, story_channel, one_story, story_respondent_id
     # command = message.content.split()[0]
     # args = message.content.split()[1:0]
 
@@ -695,7 +998,7 @@ async def on_message(message):
                         await message.channel.purge(limit=1)
                         
                     else:
-                        # Check if the word is in the Oxford dictionary (simplified check) (becoz i didn't know anythin back then)
+                        # Check if the word is in the Oxford dictionary (simplified check) (becoz i didn't know anythin back then) <- Didn't use it
                         url1 = f"https://www.wordhippo.com/what-is/another-word-for/{word}.html"
                         url2 = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
                         response = requests.get(url1)
@@ -735,26 +1038,131 @@ async def on_message(message):
                     elif int(message.content) == (count_number+1) and message.author.id != count_respondent_id:
                         emoji = "<:CU_Accept:866720792578359317>"
                         meme_no = [4, 7, 13, 20, 21, 24, 25, 15,39,42, 64, 69, 74, 76, 123, 365, 404, 420, 666, 911, 1234, 1337, 1984, 2012, 2077, 9000, 117013, 58008, 5318008]
-                        if (count_number+1)>100:
-                            emoji1 = ""
-                        elif (count_number+1) in 
-                        # elif (count_number+1) == 69 or expected_number
-                        emoji1 = "<:CU_EchindaNote:843903863492837476>"
+                        if (count_number+1)>1000 and (count_number+1) not in meme_no:
+                            emoji1 = "<:CU_Pantsu:843903867711127612>"
+                        elif (count_number+1)>100 and (count_number+1) not in meme_no:
+                            emoji1 = "<a:CU_Think:926772946511474709>"
+                        elif (count_number+1) in meme_no:
+                            emoji1 = "<a:CU_BoyCool:926772860133978112>"
+                        else:
+                            emoji1 = "<:CU_EchindaNote:843903863492837476>"
                         await message.add_reaction(emoji)
                         await message.add_reaction(emoji1)
                         count_number += 1
                         count_respondent_id = message.author.id
                 else:
+                    await message.channel.purge(limit=1)
                     await message.channel.send(f"Nah uh! {message.author.mention} you dare seek to abandon our quest for numerical dominion")
                     await asyncio.sleep(5)
                     await message.channel.purge(limit=1)
+    
+    if boom_on:
+        if message.author == bot.user:
+            return
+        if message.channel != boom_channel:
+            return
+        if message.channel == boom_channel:
+            if message.author == bot.user or message.content.startswith(('!', '.', '>', "w.")):
+                return
+            else:
+                boom_aliases = ["boom", "Boom", "boom!", "Boom!", "explosion", "explosion!","Explosion!", "Explosion", "💥", "🎆", "🎉","🎊", "💀", "💣", "🔥", "<a:CU_Burn:926772922457145354>", ":skull: ", "💥 ", "🎆 ", "🎉 ","🎊 ", "💀 ", "💣 ", "🔥 ", "sike"]
+                if message.author.id in dead_agents:
+                    await message.delete()
+                    await message.channel.send(f"Sorry {message.author.mention}, you're out of the game! Wait until the next hundred to respawn.")
+                    await asyncio.sleep(5)
+                    await message.channel.purge(limit=1)
+                    return
+
+                if message.content.isdigit():
+                    if message.author.id == boom_respondent_id:
+                        await message.delete()
+                        await message.channel.send(f"Whoa there, {message.author.mention}! You're out! You can't hog the action with two responses in a row. Give others a chance!")
+                        await asyncio.sleep(5)
+                        await message.channel.purge(limit=1)
+                    elif int(message.content) != (boom_number + 1):
+                        await message.channel.send(f"Nice try, {message.author.mention}, but you missed the mark! The next number should have been **{boom_number + 1}**. Keep your head in the game!")
+                        await message.delete()
+                        await asyncio.sleep(5)
+                        await message.channel.purge(limit=1)
+                    elif int(message.content) == (boom_number + 1):
+                        if int(message.content) % boom_multiple == 0:
+                            dead_agents.append(message.author.id)
+                            await message.channel.send(f"{message.author.mention}, you should have said 'BOOM!' You're out! Wait until the next hundred to respawn.")
+                            await message.delete()
+                            await asyncio.sleep(5)
+                            await message.channel.purge(limit=1)
+                        else:
+                            emoji_boom = "<:CU_Bomb:1255844486903234703>"
+                            await message.add_reaction(emoji_boom)
+                            boom_number += 1
+                            boom_respondent_id = message.author.id
+                elif message.content.lower() in boom_aliases:
+                    if (boom_number+1) % boom_multiple == 0:
+                        emoji_explode = "<a:CU_Explosion:1255844777388146720>"
+                        await message.add_reaction(emoji_explode)
+                        boom_number += 1
+                        boom_respondent_id = message.author.id
+                    else:
+                        dead_agents.append(message.author.id)
+                        await message.channel.send(f"{message.author.mention}, that's not a 'BOOM!' moment! You're out! Wait until the next hundred to respawn.")
+                        await message.delete()
+                        await asyncio.sleep(5)
+                        await message.channel.purge(limit=1)
+                else:
+                    await message.channel.purge(limit=1)
+                    await message.channel.send(f"Invalid input, {message.author.mention}! Stick to the numbers or 'BOOM!'")
+                    await asyncio.sleep(5)
+                    await message.channel.purge(limit=1)
+
+                if boom_number % 100 == 0 or boom_number == 0:
+                    dead_agents = []
+                    await message.channel.send("Everyone respawns! Ready to continue the game?")
+
 
 
     
     if story_on:
-        return 
+        if message.author == bot.user:
+            return
+        if message.channel != story_channel:
+            return
+        if message.channel == story_channel:
+            if message.author == bot.user or message.content.startswith(('!', '.', '>', "w.")):
+                return
+            elif story_respondent_id == None or message.author.id != story_respondent_id:
+                word = message.content.lower()
+                
+                if word in prohibited_words:
+                    await message.send(f"Uggh {message.author.mention}, that word no good! Tribe no like bad words! Find proper word or be gone!")
+                
+                
+                s_url = f"https://www.wordhippo.com/what-is/another-word-for/{word}.html"
+                s_url1 = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
+
+                sresponse = requests.get(s_url)
+                sresponse_1 = requests.get(s_url1)
+                
+                if sresponse.status_code == 200 or sresponse_1.status_code == 200:
+                    s_emoji = "<:CU_Accept:866720792578359317>"
+                    await message.add_reaction(s_emoji)
+                    one_story.append(word)
+                    story_respondent_id = message.author.id
+                
+                else:
+                    await message.channel.purge(limit = 1)
+                    await message.channel.send(f"Uggh, {message.author.id} that not word. Find must proper word!")
 
 
+            else:
+                await message.delete()
+                await message.channel.send(f"Uggh {message.author.mention}, you already speak! other Monke want speak too!")
+                await asyncio.sleep(5)
+                await message.channel.purge(limit =1)
+                
+
+
+    if hang_on:
+        return
 
 
 
