@@ -69,7 +69,7 @@ Let the game begin! The game has started! The first letter is: **{last_letter.up
 
         if message.channel == desired_channel and message.content.lower().startswith(last_letter) and len(message.content) > 1 and message.author.id != respondent_id:
             word = message.content.lower()
-            # Check if the word is in the Oxford dictionary (simplified check)
+            # Check if the word is in the Oxford dictionary (simplified check)   header is a user-agent header for http request ("the User-Agent header is an HTTP header intended to identify the user agent responsible for making a given HTTP request")  understood from: https://www.geeksforgeeks.org/http-headers-user-agent/
             headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
             response_word = requests.get(f'https://www.oxfordlearnersdictionaries.com/definition/english/{word}', headers=headers)
             
