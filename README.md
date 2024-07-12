@@ -1,5 +1,5 @@
 # WordBot
-
+![Banner](https://media.discordapp.net/attachments/865310876319612935/1239481704012582914/New_Project.png?ex=66922eca&is=6690dd4a&hm=1d46a8b09b4c08ced964e9b54ec276af7d7678fddc02990de95256c8ba1991ff&=&format=webp&quality=lossless)
 ## Purpose, Achievements, and Goals
 
 ### Purpose:
@@ -22,7 +22,7 @@ We have successfully developed a comprehensive set of commands for WordBot, each
 ### Goals:
 The goals we aimed to accomplish with WordBot include:
 
-1. **Educational Engagement**: By providing definitions, synonyms, etymology, and example sentences, WordBot helps users improve their vocabulary and understanding of the English language in an interactive manner.
+1. **Educational Engagement**: By providing definitions, synonyms, etymology, and example sentences, WordBot helps users improve their vocabulary and understanding of the English language interactively.
 2. **Interactive Learning**: Through games like Word-Chain, One-Word Story, and Hangman, we aim to make learning fun and engaging, encouraging users to think creatively and collaboratively.
 3. **Community Building**: WordBot's multiplayer games and quote-sharing features foster a sense of community, promoting interaction and bonding among members.
 4. **Mental Agility**: Games like Count and Boom challenge users' mental agility and strategic thinking, contributing to cognitive development.
@@ -48,7 +48,7 @@ I decided to develop a chat-based word game (Word-Chain) for the server members.
 
 ## Acknowledgments
 
-Special thanks to my friends, Cameron Morland (CS 114 Professor), and the creators of the APIs used. Additional gratitude goes to the original authors of WordBot: nephthy, ysfchn, and Zamion101.
+Special thanks to my friends, Cameron Morland (CS 114 Professor), Rapptz (Creator of discord.py) and the creators of the APIs used. Additional gratitude goes to the original authors of WordBot: nephthy, ysfchn, and Zamion101.
 
 A quote from Prof. Morland that resonated with me: 
 > "Start by working with an existing project, and work to understand a piece of it well enough to modify its behavior. Gradually change something that works. Break it, then fix it; add new capabilities, or make them work differently."
