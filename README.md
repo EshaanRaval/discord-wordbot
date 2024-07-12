@@ -55,5 +55,4 @@ I decided to develop a chat-based word game (Word-Chain) for the server members.
 Special thanks to my friends, Cameron Morland (CS 114 Professor), Rapptz (Creator of discord.py) and the creators of the APIs used. Additional gratitude goes to the original authors of WordBot: nephthy, ysfchn, and Zamion101.
 
 A quote from Prof. Morland that resonated with me: 
-> "Start by working with an existing project, and work to understand a piece of it well enough to modify its behavior.
->  Gradually change something that works. Break it, then fix it; add new capabilities, or make them work differently."
+> "Start by working with an existing project, and work to understand a piece of it well enough to modify its behavior. <br> Gradually change something that works. Break it, then fix it; add new capabilities, or make them work differently."
