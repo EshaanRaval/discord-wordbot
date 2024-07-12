@@ -1,7 +1,8 @@
 # WordBot
 ![Banner](https://media.discordapp.net/attachments/865310876319612935/1239481704012582914/New_Project.png?ex=66922eca&is=6690dd4a&hm=1d46a8b09b4c08ced964e9b54ec276af7d7678fddc02990de95256c8ba1991ff&=&format=webp&quality=lossless)
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)
+<br>
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)(https://github.com/Rapptz/discord.py)
+![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)(https://discord.gg/cAz4tN4fgS)
 
 ## Purpose, Achievements, and Goals
 
